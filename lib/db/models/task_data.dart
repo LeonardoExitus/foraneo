@@ -81,13 +81,13 @@ class TaskData {
         element["price"], element["active"] == "true" ? true : false);
   }
 
-  Future<String> deleteIdTaskDB(int id) async {
+  Future<String> deleteIdTaskDB(Task task) async {
     // Task(id_task INTEGER PRIMARY KEY AUTOINCREMENT, id_category INTEGER, product TEXT, price TEXT, active BOOLEAN)
     String rute = await conectionDB.loginDB();
     Database database = await openDatabase(rute,
         version: 1, onCreate: (Database db, int version) async {});
 
-    await database.rawDelete('DELETE FROM Task WHERE id_task = ?', ['$id']);
+    await database.rawDelete('DELETE FROM Task WHERE id_task = ?', ['${task.idTask}']);
     // assert(count == 1);
 
 // Close the database

@@ -33,9 +33,9 @@ class ConectionDB {
 
     List<Map> list2 = await database.rawQuery('SELECT * FROM Task');
 
-    print(list);
-    print(list1);
-    print(list2);
+    // print(list);
+    // print(list1);
+    // print(list2);
   }
 
   Future<List<PostContent>> getContentAllShoopingDB() async {
@@ -84,6 +84,5 @@ class ConectionDB {
     return await getContentAllShoopingDB();
   }
 
-  Future<void> closeDB()async{
-  }
+  Future<void> closeDB() async {}
 }

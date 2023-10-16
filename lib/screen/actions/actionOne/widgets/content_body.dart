@@ -9,6 +9,7 @@ import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:foraneo/screen/actions/actionOne/widgets/card_category.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../utils/colors.dart';
 import 'card_shooping.dart';
 
 class ContentBody extends StatefulWidget {
@@ -26,7 +27,7 @@ class _ContentBodyState extends State<ContentBody> {
     // TODO: implement initState
     super.initState();
     final shooping = context.read<ShoopingNotifier>();
-    
+
     ConectionDB conectionDB = ConectionDB();
     MyAppPreferences.getCreateTableShooping().then((value) async {
       await MyAppPreferences.setCreateTableShooping(true);
@@ -55,7 +56,7 @@ class _ContentBodyState extends State<ContentBody> {
                     (index) => FadeInLeft(
                         duration: const Duration(milliseconds: 400),
                         child: Dismissible(
-                          key: ValueKey<int>(index),
+                          key: UniqueKey(),
                           background: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -70,11 +71,16 @@ class _ContentBodyState extends State<ContentBody> {
                               postContent: notifier.getListCard[index]),
                           confirmDismiss: (direction) async {
                             if (direction == DismissDirection.endToStart) {
-                              await Future.delayed(const Duration(seconds: 2));
+                              await Future.delayed(
+                                  const Duration(milliseconds: 500));
                               await ConectionDB()
                                   .deletePostDB(notifier.getListCard[index]);
+                              notifier.deleteContaintPost(
+                                  post: notifier.getListCard[index]);
+
                               return true;
                             }
+                            return null;
                           },
                         )))
                 : [
@@ -113,27 +119,117 @@ class ContentBodyPost extends StatefulWidget {
 }
 
 class _ContentBodyPostState extends State<ContentBodyPost> {
+  // late List<TaskCategory> post;
+  late bool expand;
+  late ShoopingNotifier shooping;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    expand = false;
+    shooping = context.read<ShoopingNotifier>();
+    // post = shooping.postContent.listTaskCategory;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     // print('"idPost":"0","category":"","title":""');
     return Consumer<ShoopingNotifier>(builder: (context, notifier, __) {
-      final post = notifier.postContent.listTaskCategory;
       return Column(
         children: [
-          ...List.generate(post.length, (index) {
+          Container(
+            height: size.height * 0.06,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        for (TaskCategory element
+                            in shooping.postContent.listTaskCategory) {
+                          shooping.updateContainPost(
+                              category:
+                                  element.copyTaskCategory(expand: !expand));
+                        }
+                        expand = !expand;
+                      });
+                    },
+                    child: Container(
+                      height: size.width * 0.08,
+                      width: size.width * 0.08,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(),
+                          color: Colors.black54),
+                      child: Icon(
+                        expand ? Icons.arrow_downward : Icons.arrow_upward,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              alignment: Alignment.center,
+                              decoration: const BoxDecoration(
+                                  color: Color.fromARGB(255, 35, 224, 107),
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20))),
+                              height: size.height * 0.2,
+                              child: Text(
+                                "Total: \$${shooping.totalPrice().toString()}",
+                                style: const TextStyle(
+                                    fontSize: 26,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          });
+                    },
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: size.width * 0.08,
+                        width: size.width * 0.3,
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: const LinearGradient(colors: [
+                              AppColors.lightPurple,
+                              Color.fromARGB(255, 150, 238, 250),
+                              AppColors.lightPurple,
+                            ])),
+                        child: const Text(
+                          "Total a pagar",
+                          style: TextStyle(),
+                        )),
+                  )
+                ],
+              ),
+            ),
+          ),
+          ...List.generate(shooping.postContent.listTaskCategory.length,
+              (index) {
             return Container(
               margin: EdgeInsets.only(top: index == 0 ? 20 : 0, bottom: 20),
               child: Column(
                 children: [
                   CardCategory(
-                    position: index,
+                    category: notifier.postContent.listTaskCategory[index],
                   ),
-                  AddProduct(onTap: () async {
-                    final newTask = await TaskData().insertTaskDB(post[index]);
-                    notifier.addTaskInCategory(newTask);
-                    FocusManager.instance.primaryFocus?.previousFocus();
-                  }),
+                  !notifier.postContent.listTaskCategory[index].expand
+                      ? AddProduct(onTap: () async {
+                          final newTask = await TaskData().insertTaskDB(
+                              shooping.postContent.listTaskCategory[index]);
+                          shooping.addTaskInCategory(newTask);
+                        })
+                      : const Center()
                 ],
               ),
             );

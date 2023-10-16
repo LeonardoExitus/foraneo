@@ -8,9 +8,9 @@ import '../../../widgets/input_label.dart';
 import '../../../../provider/shooping_notifier.dart';
 
 class CardCategory extends StatefulWidget {
-  const CardCategory({required this.position, super.key});
+  const CardCategory({required this.category, super.key});
 
-  final int position;
+  final TaskCategory category;
 
   @override
   State<CardCategory> createState() => _CardCategoryState();
@@ -25,42 +25,48 @@ class _CardCategoryState extends State<CardCategory> {
     // TODO: implement initState
     super.initState();
     shooping = context.read<ShoopingNotifier>();
-    taskCategory = shooping.postContent.listTaskCategory[widget.position];
     // drop = shooping.listCategory.first;
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    taskCategory = widget.category;
     // taskCategory = shooping.postContent.listTaskCategory[widget.position];
     // final listItems = shooping.listUpdate();
 
     return Stack(
+      alignment: Alignment.topCenter,
       children: [
+        !taskCategory.expand
+            ? Container(
+                // margin: const EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(
+                  top: size.height * 0.05,
+                ),
+                width: size.width * 0.95,
+                // height: size.height * 0.08,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                    boxShadow: [BoxShadow(blurRadius: 1, offset: Offset(0, 1))],
+                    gradient: LinearGradient(colors: [
+                      Colors.white,
+                      Colors.white,
+                    ])),
+                child: Flex(
+                    direction: Axis.vertical,
+                    children:
+                        List.generate(taskCategory.listTask.length, (index) {
+                      // print(taskCategory.listTask[index].idTask);
+                      return TaskContent(task: taskCategory.listTask[index]);
+                    })),
+              )
+            : const Center(),
         Container(
           // margin: const EdgeInsets.only(top: 20),
-          padding: EdgeInsets.only(
-            top: size.height * 0.05,
-          ),
-          width: size.width * 0.95,
-          // height: size.height * 0.08,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              boxShadow: [BoxShadow(blurRadius: 1, offset: Offset(0, 1))],
-              gradient: LinearGradient(colors: [
-                Colors.white,
-                Colors.white,
-              ])),
-          child: Flex(
-              direction: Axis.vertical,
-              children: List.generate(taskCategory.listTask.length, (index) {
-                print(taskCategory.listTask[index].idTask);
-                return TaskContent(task: taskCategory.listTask[index]);
-              })),
-        ),
-        Container(
-          // margin: const EdgeInsets.only(top: 20),
+
           height: size.height * 0.04,
           width: size.width * 0.95,
           decoration: BoxDecoration(
@@ -74,17 +80,30 @@ class _CardCategoryState extends State<CardCategory> {
             direction: Axis.horizontal,
             children: [
               Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    const BoxDecoration(border: Border(right: BorderSide())),
-                child: const Text(
-                  "Categoría:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              )),
+                  child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          shooping.updateContainPost(
+                              category: taskCategory.copyTaskCategory(
+                                  expand: !taskCategory.expand));
+                        });
+                      },
+                      child: Icon(!taskCategory.expand
+                          ? Icons.arrow_upward
+                          : Icons.arrow_downward))),
+              // Expanded(
+              //     flex: 2,
+              //     child: Container(
+              //       alignment: Alignment.center,
+              //       decoration: const BoxDecoration(
+              //           border: Border(right: BorderSide())),
+              //       child: const Text(
+              //         "Categoría:",
+              //         style: TextStyle(fontWeight: FontWeight.bold),
+              //       ),
+              //     )),
               Expanded(
-                  flex: 4,
+                  flex: 6,
                   child: Flex(
                     direction: Axis.horizontal,
                     children: [
@@ -140,7 +159,7 @@ class _CardCategoryState extends State<CardCategory> {
                   ))
             ],
           ),
-        ),
+        )
       ],
     );
   }

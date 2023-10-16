@@ -39,107 +39,24 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     final shooping = context.read<ShoopingNotifier>();
     final size = MediaQuery.of(context).size;
+    // bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
+    // print(showFab);
 
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final category = await CategoryData()
-                  .insertCategoryDB(shooping.postContent);
-              final task =
-                  await TaskData().insertTaskDB(category);
-              shooping.newCategory(category);
-              shooping.addTaskInCategory(task);
-            },
-            backgroundColor: const Color.fromARGB(255, 35, 224, 107),
-            child: const Icon(Icons.post_add)),
-
-        // bottomSheet: SizedBox(
-        //   height: size.height * 0.1,
-        //   // width: size.width,
-        //   // color: Colors.transparent.withOpacity(opacity),
-        //   child: Flex(
-        //     direction: Axis.horizontal,
-        //     children: [
-        //       Expanded(
-        //           flex: 3,
-        //           child: Padding(
-        //             padding: EdgeInsets.only(
-        //               right: size.width * 0.1,
-        //               top: size.width * 0.08,
-        //             ),
-        //             child: InkWell(
-        //               child: Container(
-        //                 decoration: const BoxDecoration(
-        //                     color: Color.fromARGB(255, 35, 224, 107),
-        //                     borderRadius: BorderRadius.only(
-        //                         topRight: Radius.circular(50))),
-        //                 child: const SizedBox.expand(
-        //                     child: Center(
-        //                         child: Text(
-        //                   "Ver detalles",
-        //                   style: TextStyle(
-        //                       color: Colors.white,
-        //                       fontSize: 20,
-        //                       fontWeight: FontWeight.bold),
-        //                 ))),
-        //               ),
-        //               onTap: () {
-        //                 setState(() {});
-        //                 final totalPrice = shooping.totalPrice();
-        //                 print(shooping
-        //                     .postContent.listTaskCategory[4].listTask[0].price);
-        //                 showModalBottomSheet(
-        //                     backgroundColor: Colors.transparent,
-        //                     context: context,
-        //                     builder: (context) {
-        //                       return Container(
-        //                         alignment: Alignment.center,
-        //                         decoration: const BoxDecoration(
-        //                             color: Color.fromARGB(255, 35, 224, 107),
-        //                             borderRadius: BorderRadius.vertical(
-        //                                 top: Radius.circular(20))),
-        //                         height: size.height * 0.2,
-        //                         child: Text(
-        //                           "Total: \$${totalPrice.toString()}",
-        //                           style: const TextStyle(
-        //                               fontSize: 26,
-        //                               color: Colors.white,
-        //                               fontWeight: FontWeight.bold),
-        //                         ),
-        //                       );
-        //                     });
-        //               },
-        //             ),
-        //           )),
-        //       Expanded(
-        //         child: FloatingActionButton(
-        //             onPressed: () async {
-        //               final category = await CategoryData().insertCategoryDB(
-        //                   shooping.postContent, shooping.database);
-        //               final task = await TaskData()
-        //                   .insertTaskDB(category, shooping.database);
-        //               shooping.newCategory(category);
-        //               shooping.addTaskInCategory(task);
-        //             },
-        //             backgroundColor: const Color.fromARGB(255, 35, 224, 107),
-        //             child: const Icon(Icons.post_add)),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        // floatingActionButton: Container(
-        //   alignment: Alignment.bottomCenter,
-        //   color: Colors.red,
-        //   height: size.height * 0.1,
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     children: [
-
-        //     ],
-        //   ),
-        // ),
+        floatingActionButton: Visibility(
+          visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
+          child: FloatingActionButton(
+              onPressed: () async {
+                final category =
+                    await CategoryData().insertCategoryDB(shooping.postContent);
+                final task = await TaskData().insertTaskDB(category);
+                shooping.newCategory(category);
+                shooping.addTaskInCategory(task);
+              },
+              backgroundColor: Colors.amber,
+              child: const Icon(Icons.post_add)),
+        ),
         body: Stack(
           fit: StackFit.expand,
           children: [

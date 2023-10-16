@@ -12,7 +12,9 @@ class InputLabel extends StatelessWidget {
     this.fontWeight = false,
     this.colorText = Colors.black,
     this.colorHint = Colors.black,
-    // this.labelText,
+    this.focusNode,
+    this.onEditingComplete,
+    this.textInputAction,
   });
 
   final String? labelText;
@@ -23,10 +25,16 @@ class InputLabel extends StatelessWidget {
   final bool fontWeight;
   final Color? colorText;
   final Color? colorHint;
+  final FocusNode? focusNode;
+  final void Function()? onEditingComplete;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      textInputAction: textInputAction,
+      onEditingComplete: onEditingComplete,
+      focusNode: focusNode,
       keyboardType: textInputType,
       inputFormatters: textInputFormatter,
       controller: controller,

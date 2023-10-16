@@ -1,17 +1,7 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:foraneo/db/models/category_data.dart';
-import 'package:foraneo/db/models/post_data.dart';
-import 'package:foraneo/db/models/task_data.dart';
-import 'package:foraneo/db/tables_conection.dart';
-import 'package:foraneo/local/my_preferences.dart';
-import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:foraneo/utils/colors.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as path;
 
 import '../provider/home_notifier.dart';
 
@@ -92,7 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "Encuentra y registra tus lugares",
                       colorCard: AppColors.primary,
                     ),
-                    onTap: () async {},
+                    onTap: () async {
+                      
+                    },
                   ),
                   const CardOtherAction(
                     iconTwo: Icons.calendar_month,

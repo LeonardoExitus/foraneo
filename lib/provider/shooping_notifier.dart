@@ -1,4 +1,7 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
+import 'package:foraneo/apis/http_handler.dart';
 import "package:foraneo/db/models/post_data.dart";
 import "package:foraneo/db/models/task_data.dart";
 import "package:foraneo/db/tables_conection.dart";
@@ -56,6 +59,7 @@ class ShoopingNotifier with ChangeNotifier {
 
   PostContent postContent = PostContent(0, "", "", "", []);
   bool save = false;
+  bool visibility = false;
 
   PostContent get getPost => postContent;
 
@@ -116,11 +120,11 @@ class ShoopingNotifier with ChangeNotifier {
     await TaskData().updateTaskActiveDB(task);
   }
 
-  void updateContainPost({
-    PostContent? post,
-    TaskCategory? category,
-    Task? task,
-  }) {
+  void updateContainPost(
+      {PostContent? post,
+      TaskCategory? category,
+      Task? task,
+      bool listener = false}) {
     if (post != null) {
       postContent = post;
     }
@@ -134,6 +138,7 @@ class ShoopingNotifier with ChangeNotifier {
         }
       }
       postContent = postContent.copyPostContent(listTaskCategory: temp);
+      notifyListeners();
     }
     if (task != null) {
       List<TaskCategory> tempCat = [];
@@ -155,7 +160,48 @@ class ShoopingNotifier with ChangeNotifier {
       }
       postContent = postContent.copyPostContent(listTaskCategory: tempCat);
     }
-    // notifyListeners();
+    if (listener == true) {
+      notifyListeners();
+    }
+  }
+
+  void deleteContaintPost({
+    PostContent? post,
+    TaskCategory? category,
+    Task? task,
+  }) {
+    if (post != null) {
+      for (var i = 0; i < listCard.length; i++) {
+        if (listCard[i].idPost == post.idPost) {
+          listCard.removeAt(i);
+        }
+      }
+      notifyListeners();
+    }
+
+    if (category != null) {
+      for (var i = 0; i < postContent.listTaskCategory.length; i++) {
+        if (postContent.listTaskCategory[i].idTaskCategory ==
+            category.idTaskCategory) {
+          postContent.listTaskCategory.removeAt(i);
+        }
+      }
+      notifyListeners();
+    }
+
+    if (task != null) {
+      for (var x = 0; x < postContent.listTaskCategory.length; x++) {
+        for (var i = 0;
+            i < postContent.listTaskCategory[x].listTask.length;
+            i++) {
+          if (postContent.listTaskCategory[x].listTask[i].idTask ==
+              task.idTask) {
+            postContent.listTaskCategory[x].listTask.removeAt(i);
+          }
+        }
+      }
+      notifyListeners();
+    }
   }
 
   String totalPrice() {
@@ -169,9 +215,9 @@ class ShoopingNotifier with ChangeNotifier {
         total = total + double.parse(element.price.replaceAll(",", ""));
       }
     }
-    notifyListeners();
     return total.toString();
   }
+  
 
   // --------------------------------------------------------------
   String dateTimeNow() {
@@ -280,6 +326,20 @@ class ShoopingNotifier with ChangeNotifier {
 
   //   }
   // }
+  Future<String> getProductBarcode(String barcode) async {
+    // try {
+    final customResponse = await HttpHandler.post('https://gtincheck.gs1uk.org',
+        headers: {"Authorization": "Bearer aaaaaaaaaaaaaaaaaaaa"},
+        body: jsonEncode({
+          "gtins": [barcode]
+        }));
+    if (customResponse.response.statusCode == 200) {
+      final map =
+          jsonDecode(customResponse.response.body) as Map<String, dynamic>;
+      return map["GTINTestResults"][0]["ProductDescription"] ?? "-1";
+    }
+    return "error";
+  }
 }
 
 class Task {
@@ -308,19 +368,23 @@ class TaskCategory {
   final int idPost;
   final String category;
   final List<Task> listTask;
+  final bool expand;
 
-  TaskCategory(this.idTaskCategory, this.idPost, this.category, this.listTask);
+  TaskCategory(this.idTaskCategory, this.idPost, this.category, this.listTask,
+      this.expand);
 
   TaskCategory copyTaskCategory(
       {int? idTaskCategory,
       int? idPost,
       String? category,
-      List<Task>? listTask}) {
+      List<Task>? listTask,
+      bool? expand}) {
     return TaskCategory(
         idTaskCategory ?? this.idTaskCategory,
         idPost ?? this.idPost,
         category ?? this.category,
-        listTask ?? this.listTask);
+        listTask ?? this.listTask,
+        expand ?? this.expand);
   }
 }
 

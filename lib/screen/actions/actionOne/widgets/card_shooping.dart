@@ -16,8 +16,8 @@ class CardShooping extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        shooping.postContent = postContent;
         shooping.shoopingPage.jumpToPage(1);
+        shooping.postContent = postContent;
       },
       child: Container(
         margin: const EdgeInsets.only(top: 20),
@@ -26,7 +26,7 @@ class CardShooping extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [BoxShadow(blurRadius: 6, offset: Offset(1, 1))],
-            gradient: LinearGradient(colors: [
+            gradient: const LinearGradient(colors: [
               Color(0XFFFFE8AC),
               Color.fromARGB(255, 188, 250, 221),
               // Colors.white,

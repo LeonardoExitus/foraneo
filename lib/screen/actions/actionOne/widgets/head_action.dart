@@ -1,8 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:foraneo/db/models/post_data.dart';
-import 'package:foraneo/db/tables_conection.dart';
-import 'package:foraneo/local/my_preferences.dart';
 import 'package:foraneo/provider/home_notifier.dart';
 import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:foraneo/utils/colors.dart';
@@ -21,7 +18,6 @@ class HeadAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final notifier = context.read<HomeNotifier>();
-    final shooping = context.read<ShoopingNotifier>();
 
     return Stack(
       children: [
@@ -60,19 +56,8 @@ class HeadAction extends StatelessWidget {
   }
 }
 
-class HeadActionPost extends StatefulWidget {
+class HeadActionPost extends StatelessWidget {
   const HeadActionPost({super.key});
-
-  @override
-  State<HeadActionPost> createState() => _HeadActionPostState();
-}
-
-class _HeadActionPostState extends State<HeadActionPost> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

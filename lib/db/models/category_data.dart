@@ -13,10 +13,10 @@ class CategoryData {
         version: 1, onCreate: (Database db, int version) async {});
 
     List<Map> list = await database.rawQuery('SELECT * FROM Category');
-    print(list);
+    // print(list);
     for (Map element in list) {
       categoryList.add(TaskCategory(element["id_category"], element["id_post"],
-          element["task_category"], []));
+          element["task_category"], [], false));
     }
 
     return categoryList;
@@ -29,12 +29,12 @@ class CategoryData {
     Database database = await openDatabase(rute,
         version: 1, onCreate: (Database db, int version) async {});
 
-    List<Map> list =
-        await database.rawQuery('SELECT * FROM Category WHERE id_post = $idPost');
-        
+    List<Map> list = await database
+        .rawQuery('SELECT * FROM Category WHERE id_post = $idPost');
+
     for (Map element in list) {
       categoryList.add(TaskCategory(element["id_category"], element["id_post"],
-          element["task_category"], []));
+          element["task_category"], [], false));
     }
 
     return categoryList;
@@ -68,7 +68,7 @@ class CategoryData {
     final element = list[list.length - 1];
 
     return TaskCategory(element["id_category"], element["id_post"],
-        element["task_category"], []);
+        element["task_category"], [], false);
   }
 
   Future<void> updateCategoryDB(TaskCategory category) async {
@@ -81,8 +81,8 @@ class CategoryData {
         'UPDATE Category SET task_category = ? WHERE id_category = ?',
         [category.category, '${category.idTaskCategory}']);
 
-    print(category.idTaskCategory);
-    print(category.category);
+    // print(category.idTaskCategory);
+    // print(category.category);
     // return "Actualizado: Exitoso";
   }
 }
