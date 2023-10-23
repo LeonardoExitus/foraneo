@@ -8,7 +8,7 @@ import 'package:path/path.dart' as path;
 class ConectionDB {
   Future<String> loginDB() async {
     var databasesPath = await getDatabasesPath();
-    return path.join(databasesPath, 'foraneo_test.db');
+    return path.join(databasesPath, 'foraneo_test2.db');
   }
 
   Future<void> createTables() async {
@@ -20,12 +20,16 @@ class ConectionDB {
       //     'CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT, value INTEGER, num REAL)');
     });
 
-    await database.execute(
-        'CREATE TABLE Post(id_post INTEGER PRIMARY KEY AUTOINCREMENT, category_post TEXT, title_post TEXT, create_post TEXT)');
-    await database.execute(
-        'CREATE TABLE Category(id_category INTEGER PRIMARY KEY AUTOINCREMENT, id_post INTEGER, task_category TEXT)');
-    await database.execute(
-        'CREATE TABLE Task(id_task INTEGER PRIMARY KEY AUTOINCREMENT, id_category INTEGER, product TEXT, price TEXT, active BOOLEAN)');
+    try {
+      await database.execute(
+          'CREATE TABLE Post(id_post INTEGER PRIMARY KEY AUTOINCREMENT, category_post TEXT, title_post TEXT, create_post TEXT)');
+      await database.execute(
+          'CREATE TABLE Category(id_category INTEGER PRIMARY KEY AUTOINCREMENT, id_post INTEGER, task_category TEXT)');
+      await database.execute(
+          'CREATE TABLE Task(id_task INTEGER PRIMARY KEY AUTOINCREMENT, id_category INTEGER, product TEXT, price TEXT, active BOOLEAN, items_product INTEGER)');
+    } catch (e) {
+      print(e);
+    }
 
     List<Map> list = await database.rawQuery('SELECT * FROM Post');
 
@@ -33,9 +37,9 @@ class ConectionDB {
 
     List<Map> list2 = await database.rawQuery('SELECT * FROM Task');
 
-    // print(list);
-    // print(list1);
-    // print(list2);
+    print(list);
+    print(list1);
+    print(list2);
   }
 
   Future<List<PostContent>> getContentAllShoopingDB() async {

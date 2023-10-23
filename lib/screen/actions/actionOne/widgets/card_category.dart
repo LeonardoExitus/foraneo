@@ -46,15 +46,22 @@ class _CardCategoryState extends State<CardCategory> {
                 ),
                 width: size.width * 0.95,
                 // height: size.height * 0.08,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                    boxShadow: [BoxShadow(blurRadius: 1, offset: Offset(0, 1))],
-                    gradient: LinearGradient(colors: [
-                      Colors.white,
-                      Colors.white,
-                    ])),
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  image: const DecorationImage(
+                      image: AssetImage("assets/images/vector_eat.jpg"),
+                      fit: BoxFit.cover,
+                      opacity: 0.1),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.white,
+                        blurRadius: 1,
+                        offset: Offset(0, 1))
+                  ],
+                ),
                 child: Flex(
                     direction: Axis.vertical,
                     children:
@@ -74,6 +81,7 @@ class _CardCategoryState extends State<CardCategory> {
               boxShadow: const [BoxShadow(blurRadius: 6, offset: Offset(1, 1))],
               gradient: const LinearGradient(colors: [
                 Color.fromARGB(255, 150, 250, 188),
+                Color.fromARGB(255, 84, 245, 146),
                 Color.fromARGB(255, 244, 240, 253),
               ])),
           child: Flex(
@@ -116,6 +124,7 @@ class _CardCategoryState extends State<CardCategory> {
                                 ? "Selecciona una categoría"
                                 : taskCategory.category,
                             style: TextStyle(
+                                // color: Colors.white,
                                 fontWeight: taskCategory.category.isNotEmpty
                                     ? FontWeight.bold
                                     : null),

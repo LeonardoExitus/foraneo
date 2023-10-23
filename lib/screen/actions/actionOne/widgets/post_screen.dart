@@ -44,19 +44,17 @@ class _PostScreenState extends State<PostScreen> {
 
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: Visibility(
-          visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
-          child: FloatingActionButton(
-              onPressed: () async {
-                final category =
-                    await CategoryData().insertCategoryDB(shooping.postContent);
-                final task = await TaskData().insertTaskDB(category);
-                shooping.newCategory(category);
-                shooping.addTaskInCategory(task);
-              },
-              backgroundColor: Colors.amber,
-              child: const Icon(Icons.post_add)),
-        ),
+        resizeToAvoidBottomInset: false,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              final category =
+                  await CategoryData().insertCategoryDB(shooping.postContent);
+              final task = await TaskData().insertTaskDB(category);
+              shooping.newCategory(category);
+              shooping.addTaskInCategory(task);
+            },
+            backgroundColor: Colors.amber,
+            child: const Icon(Icons.post_add)),
         body: Stack(
           fit: StackFit.expand,
           children: [

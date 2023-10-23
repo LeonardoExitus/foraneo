@@ -20,7 +20,8 @@ class TaskData {
           element["id_category"],
           element["product"],
           element["price"],
-          element["active"] == "true" ? true : false));
+          element["active"] == "true" ? true : false,
+          element["items_product"]));
     }
     await database.close();
 
@@ -43,7 +44,8 @@ class TaskData {
           element["id_category"],
           element["product"],
           element["price"],
-          element["active"] == "true" ? true : false));
+          element["active"] == "true" ? true : false,
+          element["items_product"]));
     }
     await database.close();
 
@@ -70,15 +72,20 @@ class TaskData {
 
     await database.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO Task (id_category, product, price, active) VALUES("${category.idTaskCategory}", "", "", false)');
+          'INSERT INTO Task (id_category, product, price, active, items_product) VALUES("${category.idTaskCategory}", "", "", false, 1)');
       // print('inserted: $id1');
     });
     List<Map> list = await database.rawQuery('SELECT * FROM Task');
     final element = list[list.length - 1];
     await database.close();
     print("Se inserto Tarea: $list");
-    return Task(element["id_task"], element["id_category"], element["product"],
-        element["price"], element["active"] == "true" ? true : false);
+    return Task(
+        element["id_task"],
+        element["id_category"],
+        element["product"],
+        element["price"],
+        element["active"] == "true" ? true : false,
+        element["items_product"]);
   }
 
   Future<String> deleteIdTaskDB(Task task) async {
@@ -87,7 +94,8 @@ class TaskData {
     Database database = await openDatabase(rute,
         version: 1, onCreate: (Database db, int version) async {});
 
-    await database.rawDelete('DELETE FROM Task WHERE id_task = ?', ['${task.idTask}']);
+    await database
+        .rawDelete('DELETE FROM Task WHERE id_task = ?', ['${task.idTask}']);
     // assert(count == 1);
 
 // Close the database
@@ -127,6 +135,19 @@ class TaskData {
 
     await database.rawUpdate('UPDATE Task SET active = ? WHERE id_task = ?',
         ["${task.active}", '${task.idTask}']);
+    await database.close();
+    return "Actualizado: Exitoso";
+  }
+
+  Future<String> updateTaskItemDB(Task task) async {
+    // Task(id_task INTEGER PRIMARY KEY AUTOINCREMENT, id_category INTEGER, product TEXT, price TEXT, active BOOLEAN)
+    String rute = await conectionDB.loginDB();
+    Database database = await openDatabase(rute,
+        version: 1, onCreate: (Database db, int version) async {});
+
+    await database.rawUpdate(
+        'UPDATE Task SET items_product = ? WHERE id_task = ?',
+        ["${task.itemProduct}", '${task.idTask}']);
     await database.close();
     return "Actualizado: Exitoso";
   }

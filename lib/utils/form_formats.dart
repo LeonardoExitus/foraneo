@@ -91,6 +91,7 @@ class CurrencyFormat extends TextInputFormatter {
               .replaceAll(f.symbols.GROUP_SEP, '')
               .replaceAll("..", '.'));
           newString = f.format(newNumber);
+
           if (newString == "0.00" && oldValue.selection.baseOffset == 0) {
             newString = "";
           }

@@ -8,4 +8,5 @@ class AppColors {
   static const purpuraOne = Color(0XFFA33199);
   static const purpuraTwo = Color(0XFFF054E2);
   static const lightPurple = Color(0xFFD9CCFF);
+  static const gradientBlue = [Color(0xFF4a90e2), Color(0xFF1d4371)];
 }

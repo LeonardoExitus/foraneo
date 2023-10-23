@@ -28,11 +28,11 @@ class MyAppPreferences {
   // index = 1
 
   static Future<void> setCreateTableShooping(bool value) async {
-    await _instance.preferences.setBool("create-shooping1", value);
+    await _instance.preferences.setBool("create-shooping2", value);
   }
 
   static Future<bool> getCreateTableShooping() async {
-    return _instance.preferences.getBool("create-shooping1") ?? false;
+    return _instance.preferences.getBool("create-shooping2") ?? false;
   }
 
   static Future<void> updateListPost(String json, int index) async {

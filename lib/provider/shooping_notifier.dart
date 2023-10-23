@@ -60,11 +60,17 @@ class ShoopingNotifier with ChangeNotifier {
   PostContent postContent = PostContent(0, "", "", "", []);
   bool save = false;
   bool visibility = false;
+  bool totality = false;
 
   PostContent get getPost => postContent;
 
   set setPost(PostContent post) {
     postContent = post;
+    notifyListeners();
+  }
+
+  set setTotality(bool value) {
+    totality = value;
     notifyListeners();
   }
 
@@ -118,6 +124,10 @@ class ShoopingNotifier with ChangeNotifier {
 
   Future<void> updateTaskActiveDB(Task task) async {
     await TaskData().updateTaskActiveDB(task);
+  }
+
+  Future<void> updateTaskItemDB(Task task) async {
+    await TaskData().updateTaskItemDB(task);
   }
 
   void updateContainPost(
@@ -205,6 +215,7 @@ class ShoopingNotifier with ChangeNotifier {
   }
 
   String totalPrice() {
+    String result = "";
     List<Task> tasks = [];
     for (TaskCategory element in postContent.listTaskCategory) {
       tasks.addAll(element.listTask);
@@ -212,12 +223,31 @@ class ShoopingNotifier with ChangeNotifier {
     double total = 0;
     for (Task element in tasks) {
       if (element.price != "") {
-        total = total + double.parse(element.price.replaceAll(",", ""));
+        total = total +
+            (double.parse(element.price.replaceAll(",", "")) *
+                element.itemProduct);
       }
     }
-    return total.toString();
+    result = total.toStringAsFixed(2);
+    List<String> totalList = total.toStringAsFixed(2).split(".");
+    if (totalList[0].length > 3) {
+      String tempEnter = "";
+      List<String> enter = totalList[0].split("");
+      enter = enter.reversed.toList();
+      for (var i = 0; i < enter.length; i++) {
+        tempEnter = enter[i] + tempEnter;
+        if (i == 2) {
+          enter.removeRange(0, 3);
+          if (enter.isNotEmpty) {
+            tempEnter = ",$tempEnter";
+          }
+          i = -1;
+        }
+      }
+      result = "$tempEnter.${totalList[1]}";
+    }
+    return result;
   }
-  
 
   // --------------------------------------------------------------
   String dateTimeNow() {
@@ -348,18 +378,25 @@ class Task {
   final String product;
   final String price;
   final bool active;
+  final int itemProduct;
 
-  Task(this.idTask, this.idTaskCategory, this.product, this.price, this.active);
+  Task(this.idTask, this.idTaskCategory, this.product, this.price, this.active,
+      this.itemProduct);
 
-  Task copyTask({
-    int? idTask,
-    int? idTaskCategory,
-    String? product,
-    String? price,
-    bool? active,
-  }) {
-    return Task(idTask ?? this.idTask, idTaskCategory ?? this.idTaskCategory,
-        product ?? this.product, price ?? this.price, active ?? this.active);
+  Task copyTask(
+      {int? idTask,
+      int? idTaskCategory,
+      String? product,
+      String? price,
+      bool? active,
+      int? itemProduct}) {
+    return Task(
+        idTask ?? this.idTask,
+        idTaskCategory ?? this.idTaskCategory,
+        product ?? this.product,
+        price ?? this.price,
+        active ?? this.active,
+        itemProduct ?? this.itemProduct);
   }
 }
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:foraneo/db/models/task_data.dart';
@@ -7,9 +5,9 @@ import 'package:foraneo/db/tables_conection.dart';
 import 'package:foraneo/local/my_preferences.dart';
 import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:foraneo/screen/actions/actionOne/widgets/card_category.dart';
+import 'package:foraneo/utils/colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../utils/colors.dart';
 import 'card_shooping.dart';
 
 class ContentBody extends StatefulWidget {
@@ -138,7 +136,7 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
     return Consumer<ShoopingNotifier>(builder: (context, notifier, __) {
       return Column(
         children: [
-          Container(
+          SizedBox(
             height: size.height * 0.06,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -170,45 +168,64 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) {
-                            return Container(
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 35, 224, 107),
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20))),
-                              height: size.height * 0.2,
-                              child: Text(
-                                "Total: \$${shooping.totalPrice().toString()}",
-                                style: const TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      InkWell(
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: size.width * 0.08,
+                            width: size.width * 0.3,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              shooping.totality
+                                  ? "Detener compras"
+                                  : "Iniciar compras",
+                              style: const TextStyle(
+                                color: Color(0xFF1d4371),
                               ),
-                            );
-                          });
-                    },
-                    child: Container(
-                        alignment: Alignment.center,
-                        height: size.width * 0.08,
-                        width: size.width * 0.3,
-                        decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(colors: [
-                              AppColors.lightPurple,
-                              Color.fromARGB(255, 150, 238, 250),
-                              AppColors.lightPurple,
-                            ])),
-                        child: const Text(
-                          "Total a pagar",
-                          style: TextStyle(),
-                        )),
+                            )),
+                        onTap: () {
+                          shooping.setTotality = !shooping.totality;
+                        },
+                      ),
+                      shooping.totality
+                          ? SizedBox(width: size.width * 0.03)
+                          : const Center(),
+                      shooping.totality
+                          ? ForaneoButton(
+                              colorBorder: Colors.black,
+                              colorsGradient: AppColors.gradientBlue,
+                              title: "Total",
+                              colorText: Colors.white,
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    builder: (context) {
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        decoration: const BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 35, 224, 107),
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(20))),
+                                        height: size.height * 0.2,
+                                        child: Text(
+                                          "Total: \$${shooping.totalPrice().toString()}",
+                                          style: const TextStyle(
+                                              fontSize: 26,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      );
+                                    });
+                              },
+                            )
+                          : const Center()
+                    ],
                   )
                 ],
               ),
@@ -242,6 +259,56 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
         ],
       );
     });
+  }
+}
+
+class ForaneoButton extends StatelessWidget {
+  const ForaneoButton({
+    super.key,
+    this.width,
+    this.height,
+    required this.title,
+    this.colorText,
+    this.colorButton,
+    this.colorsGradient,
+    this.colorBorder,
+    this.onPressed,
+  });
+
+  final double? width;
+  final double? height;
+  final String title;
+  final Color? colorText;
+  final Color? colorButton;
+  final List<Color>? colorsGradient;
+  final Color? colorBorder;
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+        alignment: Alignment.center,
+        height: height ?? size.width * 0.08,
+        width: width ?? size.width * 0.2,
+        // height: size.width * 0.08,
+        // width: size.width * 0.2,
+        decoration: BoxDecoration(
+            border: Border.all(color: colorBorder ?? Colors.black),
+            borderRadius: BorderRadius.circular(10),
+            gradient: colorsGradient != null
+                ? LinearGradient(colors: colorsGradient!)
+                : null),
+        child: MaterialButton(
+          elevation: 0,
+          padding: const EdgeInsets.all(0),
+          onPressed: onPressed,
+          child: Text(
+            title,
+            style: TextStyle(color: colorText ?? Colors.black),
+          ),
+        ));
   }
 }
 
