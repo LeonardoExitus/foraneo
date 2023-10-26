@@ -61,7 +61,7 @@ class ShoopingNotifier with ChangeNotifier {
   bool save = false;
   bool visibility = false;
   bool totality = false;
-
+  late ExpansionTileController expandedCtr;
   PostContent get getPost => postContent;
 
   set setPost(PostContent post) {
@@ -317,9 +317,9 @@ class ShoopingNotifier with ChangeNotifier {
     }
   }
 
-  void initSelectionCategory(List<TaskCategory> category) {
+  void initSelectionCategory(List<TaskCategory> listCat) {
     List<String> list = [];
-    for (TaskCategory element in category) {
+    for (TaskCategory element in listCat) {
       list.add(element.category);
     }
 
@@ -331,6 +331,15 @@ class ShoopingNotifier with ChangeNotifier {
         }
       }
     }
+  }
+
+  Category? shearchCategory(String name) {
+    for (Category element in listCategory) {
+      if (element.name == name) {
+        return element;
+      }
+    }
+    return null;
   }
 
   List<Category> listUpdate() {
@@ -406,9 +415,10 @@ class TaskCategory {
   final String category;
   final List<Task> listTask;
   final bool expand;
+  final ExpansionTileController expansionCtr;
 
   TaskCategory(this.idTaskCategory, this.idPost, this.category, this.listTask,
-      this.expand);
+      this.expand, this.expansionCtr);
 
   TaskCategory copyTaskCategory(
       {int? idTaskCategory,
@@ -421,7 +431,8 @@ class TaskCategory {
         idPost ?? this.idPost,
         category ?? this.category,
         listTask ?? this.listTask,
-        expand ?? this.expand);
+        expand ?? this.expand,
+        expansionCtr);
   }
 }
 

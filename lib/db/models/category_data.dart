@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:foraneo/db/tables_conection.dart';
 import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:sqflite/sqflite.dart';
@@ -16,7 +17,7 @@ class CategoryData {
     // print(list);
     for (Map element in list) {
       categoryList.add(TaskCategory(element["id_category"], element["id_post"],
-          element["task_category"], [], false));
+          element["task_category"], [], false, ExpansionTileController()));
     }
 
     return categoryList;
@@ -34,7 +35,7 @@ class CategoryData {
 
     for (Map element in list) {
       categoryList.add(TaskCategory(element["id_category"], element["id_post"],
-          element["task_category"], [], false));
+          element["task_category"], [], false, ExpansionTileController()));
     }
 
     return categoryList;
@@ -68,7 +69,7 @@ class CategoryData {
     final element = list[list.length - 1];
 
     return TaskCategory(element["id_category"], element["id_post"],
-        element["task_category"], [], false);
+        element["task_category"], [], false, ExpansionTileController());
   }
 
   Future<void> updateCategoryDB(TaskCategory category) async {

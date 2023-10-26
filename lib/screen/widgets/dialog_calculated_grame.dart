@@ -4,6 +4,7 @@ import 'package:foraneo/provider/shooping_notifier.dart';
 import 'package:foraneo/screen/actions/actionOne/widgets/content_body.dart';
 import 'package:foraneo/screen/widgets/input_label.dart';
 import 'package:foraneo/screen/widgets/text_title.dart';
+import 'package:foraneo/utils/colors.dart';
 import 'package:foraneo/utils/form_formats.dart';
 
 class DialogCalculateGrame extends StatefulWidget {
@@ -63,6 +64,13 @@ class _DialogCalculateGrameState extends State<DialogCalculateGrame> {
                     signed: false,
                     decimal: false,
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      task = task.copyTask(
+                          price:
+                              calculatedGrame(priceCtrl.text, grameCtrl.text));
+                    });
+                  },
                 ),
                 const SizedBox(width: 10),
                 const Text("/ Kilo"),
@@ -75,9 +83,11 @@ class _DialogCalculateGrameState extends State<DialogCalculateGrame> {
                 const SizedBox(width: 10),
                 InputLabel(
                   onChanged: (value) {
-                    // setState(() {
-                    //   task = task.copyTask(product: value);
-                    // });
+                    setState(() {
+                      task = task.copyTask(
+                          price:
+                              calculatedGrame(priceCtrl.text, grameCtrl.text));
+                    });
                   },
                   controller: grameCtrl,
                   textAlign: true,
@@ -95,15 +105,21 @@ class _DialogCalculateGrameState extends State<DialogCalculateGrame> {
                 const Text("/ Gramo"),
               ],
             ),
-            const Text("PRECIO: \$"),
+            // Text("PRECIO: \$${task.price.isEmpty ? "0.00" : task.price}", style: TextStyle(color: Colors.),),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ForaneoButton(title: "Guardar", onPressed: () {}),
+                ForaneoButton(
+                    title: "Guardar",
+                    colorButton: AppColors.primary,
+                    colorText: Colors.white,
+                    onPressed: () {
+                      Navigator.pop(context, task);
+                    }),
                 const SizedBox(width: 10),
                 ForaneoButton(
                   title: "Cancelar",
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pop(context, task),
                 ),
               ],
             )
@@ -114,9 +130,31 @@ class _DialogCalculateGrameState extends State<DialogCalculateGrame> {
   }
 }
 
-// String calculatedGrame(String price, String grame){
-//   if(price.isNotEmpty && grame.isNotEmpty){
-    
-//   }
-
-// }
+String calculatedGrame(String price, String grame) {
+  String result = "";
+  if (price.isNotEmpty && grame.isNotEmpty) {
+    double dPrice = double.parse(price.replaceAll(",", ""));
+    double dGrame = double.parse(grame.replaceAll(",", ""));
+    result = (dGrame * (dPrice / 1000)).toStringAsFixed(2);
+    List<String> totalList = result.split(".");
+    print(totalList);
+    if (totalList[0].length > 3) {
+      String tempEnter = "";
+      List<String> enter = totalList[0].split("");
+      enter = enter.reversed.toList();
+      for (var i = 0; i < enter.length; i++) {
+        tempEnter = enter[i] + tempEnter;
+        if (i == 2) {
+          enter.removeRange(0, 3);
+          if (enter.isNotEmpty) {
+            tempEnter = ",$tempEnter";
+          }
+          i = -1;
+        }
+      }
+      result = "$tempEnter.${totalList[1]}";
+    }
+    return result;
+  }
+  return "0.00";
+}

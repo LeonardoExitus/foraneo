@@ -63,7 +63,12 @@ class _PostScreenState extends State<PostScreen> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Image.asset("assets/images/post_fond.jpg", fit: BoxFit.cover),
+                  // Image(
+                  //   image: const AssetImage("assets/images/vector_post.jpg"),
+                  //   fit: BoxFit.cover,
+                  //   color: Colors.black.withOpacity(0.05),
+                  //   colorBlendMode: BlendMode.dstATop,
+                  // )
                   Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(colors: [

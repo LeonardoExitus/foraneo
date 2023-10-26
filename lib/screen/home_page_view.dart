@@ -3,6 +3,7 @@ import 'package:foraneo/db/tables_conection.dart';
 import 'package:foraneo/local/my_preferences.dart';
 import 'package:foraneo/provider/home_notifier.dart';
 import 'package:foraneo/screen/actions/actionOne/shooping_page_view.dart';
+import 'package:foraneo/screen/actions/actionTwo/maps_screen.dart';
 import 'package:foraneo/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,7 @@ class _HomePageViewState extends State<HomePageView> {
     return PageView(
       controller: page,
       physics: const NeverScrollableScrollPhysics(),
-      children: [HomeScreen(), ShoopingPageView.init(), HomeScreen()],
+      children: [HomeScreen(), ShoopingPageView.init(), MapsScreen()],
     );
   }
 }

@@ -72,7 +72,12 @@ class HeadActionPost extends StatelessWidget {
             image: DecorationImage(
                 image: AssetImage("assets/images/lista-compras.png"),
                 fit: BoxFit.cover),
-            boxShadow: [BoxShadow(blurRadius: 2, color: Colors.black)],
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 2,
+                color: Colors.black,
+              )
+            ],
           ),
         ),
         FadeIn(

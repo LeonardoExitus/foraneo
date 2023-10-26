@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               items: List.generate(listCard().length, (index) {
                 return InkWell(
                     onTap: () async {
-                      print("vista: $index");
+                      // print("vista: $index");
 
                       page.animateToPage(index + 1,
                           duration: const Duration(milliseconds: 500),
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       colorCard: AppColors.primary,
                     ),
                     onTap: () async {
-                      
+                      page.jumpToPage(2);
                     },
                   ),
                   const CardOtherAction(

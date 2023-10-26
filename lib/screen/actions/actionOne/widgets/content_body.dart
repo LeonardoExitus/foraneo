@@ -67,6 +67,7 @@ class _ContentBodyState extends State<ContentBody> {
                           ),
                           child: CardShooping(
                               postContent: notifier.getListCard[index]),
+                          direction: DismissDirection.endToStart,
                           confirmDismiss: (direction) async {
                             if (direction == DismissDirection.endToStart) {
                               await Future.delayed(
@@ -120,12 +121,18 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
   // late List<TaskCategory> post;
   late bool expand;
   late ShoopingNotifier shooping;
+  late bool initial;
+  // late ExpansionTileController controller;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     expand = false;
     shooping = context.read<ShoopingNotifier>();
+    shooping.expandedCtr = ExpansionTileController();
+    initial = false;
+    // controller = ExpansionTileController();
     // post = shooping.postContent.listTaskCategory;
   }
 
@@ -151,6 +158,11 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
                           shooping.updateContainPost(
                               category:
                                   element.copyTaskCategory(expand: !expand));
+                          if (expand) {
+                            element.expansionCtr.expand();
+                          } else {
+                            element.expansionCtr.collapse();
+                          }
                         }
                         expand = !expand;
                       });
@@ -159,9 +171,10 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
                       height: size.width * 0.08,
                       width: size.width * 0.08,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(),
-                          color: Colors.black54),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(),
+                        color: AppColors.primary,
+                      ),
                       child: Icon(
                         expand ? Icons.arrow_downward : Icons.arrow_upward,
                         color: Colors.white,
@@ -188,6 +201,7 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
                               ),
                             )),
                         onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           shooping.setTotality = !shooping.totality;
                         },
                       ),
@@ -197,9 +211,9 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
                       shooping.totality
                           ? ForaneoButton(
                               colorBorder: Colors.black,
-                              colorsGradient: AppColors.gradientBlue,
+                              colorsGradient: AppColors.gradientGreen,
                               title: "Total",
-                              colorText: Colors.white,
+                              colorText: Colors.black,
                               onPressed: () {
                                 showModalBottomSheet(
                                     backgroundColor: Colors.transparent,
@@ -233,17 +247,31 @@ class _ContentBodyPostState extends State<ContentBodyPost> {
           ),
           ...List.generate(shooping.postContent.listTaskCategory.length,
               (index) {
+            TaskCategory categoy = notifier.postContent.listTaskCategory[index];
+            // if (!categoy.expand) {
+            //   if (initial) {
+            //     categoy.controller.expand();
+            //   }
+            // } else {
+            //   if (initial) {
+            //     categoy.controller.collapse();
+            //   }
+            // }
+            if (shooping.postContent.listTaskCategory.length == index + 1) {
+              initial = true;
+            }
+            print(expand);
+            // if(shooping.postContent.listTaskCategory.length == index)
             return Container(
               margin: EdgeInsets.only(top: index == 0 ? 20 : 0, bottom: 20),
               child: Column(
                 children: [
                   CardCategory(
-                    category: notifier.postContent.listTaskCategory[index],
-                  ),
-                  !notifier.postContent.listTaskCategory[index].expand
+                      category: categoy, expansionCtr: notifier.expandedCtr),
+                  !categoy.expand
                       ? AddProduct(onTap: () async {
-                          final newTask = await TaskData().insertTaskDB(
-                              shooping.postContent.listTaskCategory[index]);
+                          final newTask =
+                              await TaskData().insertTaskDB(categoy);
                           shooping.addTaskInCategory(newTask);
                         })
                       : const Center()
@@ -297,6 +325,7 @@ class ForaneoButton extends StatelessWidget {
         decoration: BoxDecoration(
             border: Border.all(color: colorBorder ?? Colors.black),
             borderRadius: BorderRadius.circular(10),
+            color: colorButton,
             gradient: colorsGradient != null
                 ? LinearGradient(colors: colorsGradient!)
                 : null),
