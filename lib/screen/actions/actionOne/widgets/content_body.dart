@@ -20,11 +20,12 @@ class ContentBody extends StatefulWidget {
 }
 
 class _ContentBodyState extends State<ContentBody> {
+  late ShoopingNotifier shooping;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    final shooping = context.read<ShoopingNotifier>();
+    shooping = context.read<ShoopingNotifier>();
 
     ConectionDB conectionDB = ConectionDB();
     MyAppPreferences.getCreateTableShooping().then((value) async {
@@ -33,9 +34,8 @@ class _ContentBodyState extends State<ContentBody> {
         await conectionDB.createTables();
       }
       // ignore: use_build_context_synchronously
-      final notifier = context.read<ShoopingNotifier>();
       conectionDB.getContentAllShoopingDB().then((value) async {
-        notifier.listCard = value;
+        shooping.listCard = value;
         setState(() {});
       });
     });
@@ -46,64 +46,62 @@ class _ContentBodyState extends State<ContentBody> {
     final size = MediaQuery.of(context).size;
 
     return SizedBox(
-      child: Consumer<ShoopingNotifier>(builder: (context, notifier, __) {
-        return Column(
-            children: notifier.getListCard.isNotEmpty
-                ? List.generate(
-                    notifier.getListCard.length,
-                    (index) => FadeInLeft(
-                        duration: const Duration(milliseconds: 400),
-                        child: Dismissible(
-                          key: UniqueKey(),
-                          background: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(blurRadius: 6, offset: Offset(1, 1))
-                              ],
-                              color: Colors.redAccent,
-                            ),
-                            margin: const EdgeInsets.only(top: 20),
+      child: Column(
+          children: shooping.getListCard.isNotEmpty
+              ? List.generate(
+                  shooping.getListCard.length,
+                  (index) => FadeInLeft(
+                      duration: const Duration(milliseconds: 400),
+                      child: Dismissible(
+                        key: UniqueKey(),
+                        background: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(blurRadius: 6, offset: Offset(1, 1))
+                            ],
+                            color: Colors.redAccent,
                           ),
-                          child: CardShooping(
-                              postContent: notifier.getListCard[index]),
-                          direction: DismissDirection.endToStart,
-                          confirmDismiss: (direction) async {
-                            if (direction == DismissDirection.endToStart) {
-                              await Future.delayed(
-                                  const Duration(milliseconds: 500));
-                              await ConectionDB()
-                                  .deletePostDB(notifier.getListCard[index]);
-                              notifier.deleteContaintPost(
-                                  post: notifier.getListCard[index]);
+                          margin: const EdgeInsets.only(top: 20),
+                        ),
+                        direction: DismissDirection.endToStart,
+                        confirmDismiss: (direction) async {
+                          if (direction == DismissDirection.endToStart) {
+                            await Future.delayed(
+                                const Duration(milliseconds: 500));
+                            await ConectionDB()
+                                .deletePostDB(shooping.getListCard[index]);
+                            shooping.deleteContaintPost(
+                                post: shooping.getListCard[index]);
 
-                              return true;
-                            }
-                            return null;
-                          },
-                        )))
-                : [
-                    SizedBox(
-                      height: size.height * 0.6,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.post_add,
-                            color: Colors.black12,
-                            size: size.width * 0.2,
+                            return true;
+                          }
+                          return null;
+                        },
+                        child: CardShooping(
+                            postContent: shooping.getListCard[index]),
+                      )))
+              : [
+                  SizedBox(
+                    height: size.height * 0.6,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.post_add,
+                          color: Colors.black12,
+                          size: size.width * 0.2,
+                        ),
+                        const Text(
+                          "Agrega una nueva lista",
+                          style: TextStyle(
+                            color: Colors.black38,
                           ),
-                          const Text(
-                            "Agrega una nueva lista",
-                            style: TextStyle(
-                              color: Colors.black38,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ]);
-      }),
+                        )
+                      ],
+                    ),
+                  )
+                ]),
     );
   }
 }
